@@ -1,6 +1,5 @@
 package kim.bifrost.rain.arathoth.basepack.attr
 
-import kim.bifrost.rain.arathoth.api.Register
 import kim.bifrost.rain.arathoth.api.createAttribute
 import kim.bifrost.rain.arathoth.api.handler.event
 import kim.bifrost.rain.arathoth.basepack.customOrI18nName
@@ -13,7 +12,6 @@ import org.bukkit.entity.Monster
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import taboolib.module.kether.KetherShell
-import taboolib.module.nms.getI18nName
 import taboolib.platform.type.BukkitPlayer
 
 /**
@@ -24,7 +22,7 @@ import taboolib.platform.type.BukkitPlayer
  * @since 2022/3/24 23:05
  **/
 object Attack {
-    @Register
+
     val physicalDamage = createAttribute("arathoth", "physicalDamage") {
         event(EntityDamageByEntityEvent::class.java) {
             val data = damager.status(this@createAttribute) ?: return@event
@@ -33,9 +31,8 @@ object Attack {
         config {
             set("patterns", listOf("[VALUE] physical damage"))
         }
-    }
+    }.register()
 
-    @Register
     val playerDamage = createAttribute("arathoth", "playerDamage") {
         event(EntityDamageByEntityEvent::class.java) {
             if (entity is Player) {
@@ -46,9 +43,8 @@ object Attack {
         config {
             set("patterns", listOf("[VALUE] player damage"))
         }
-    }
+    }.register()
 
-    @Register
     val monsterDamage = createAttribute("arathoth", "monsterDamage") {
         event(EntityDamageByEntityEvent::class.java) {
             if (entity is Monster) {
@@ -59,9 +55,8 @@ object Attack {
         config {
             set("patterns", listOf("[VALUE] monster damage"))
         }
-    }
+    }.register()
 
-    @Register
     val lifeSteal = createAttribute("arathoth", "lifeSteal") {
         event(EntityDamageByEntityEvent::class.java) {
             val data = damager.status(this@createAttribute) ?: return@event
@@ -70,18 +65,16 @@ object Attack {
             damager.damager().heal(value)
         }
         config {
-            set("patterns", listOf("[VALUE] physical damage"))
+            set("patterns", listOf("[VALUE] life steal"))
         }
-    }
+    }.register()
 
-    @Register
     val criticalChance = createAttribute("arathoth", "criticalChance") {
         config {
             set("patterns", listOf("[VALUE]% critical chance"))
         }
-    }
+    }.register()
 
-    @Register
     val criticalDamage = createAttribute("arathoth", "criticalDamage") {
         event(EntityDamageByEntityEvent::class.java) {
             val chance = damager.status(criticalChance)?.generateValue() ?: return@event
@@ -110,9 +103,8 @@ object Attack {
             set("critical-action.damager", "send color *\"&8* &7对 &f{{ &target }} &7暴击!\"")
             set("critical-action.target", "send color inline *\"&8* &7遭到 &f{{ &damager }} &7暴击!\"")
         }
-    }
+    }.register()
 
-    @Register
     val oblivion = createAttribute("arathoth", "oblivion") {
         event(EntityDamageByEntityEvent::class.java) {
             val data = damager.status(this@createAttribute) ?: return@event
@@ -122,9 +114,8 @@ object Attack {
         config {
             set("patterns", listOf("[VALUE] oblivion"))
         }
-    }
+    }.register()
 
-    @Register
     val attackRange = createAttribute("arathoth", "attackRange") {
         event(EntityDamageByEntityEvent::class.java) {
             val data = damager.status(this@createAttribute) ?: return@event
@@ -138,6 +129,31 @@ object Attack {
         config {
             set("patterns", listOf("[VALUE] attack range"))
         }
-    }
+    }.register()
+
+    val percentDamage = createAttribute("arathoth", "percentDamage") {
+        event(EntityDamageByEntityEvent::class.java) {
+            val data = damager.status(this@createAttribute) ?: return@event
+            val value = data.generateValue()
+            val victim = entity as LivingEntity
+            damage += victim.maxHealth * (value / 100)
+        }
+        config {
+            set("patterns", listOf("[VALUE]% percent damage"))
+        }
+    }.register()
+
+    val currentPercentDamage = createAttribute("arathoth", "currentPercentDamage") {
+        event(EntityDamageByEntityEvent::class.java) {
+            val data = damager.status(this@createAttribute) ?: return@event
+            val value = data.generateValue()
+            val victim = entity as LivingEntity
+            damage += victim.health * (value / 100)
+        }
+        config {
+            set("patterns", listOf("[VALUE]% current percent damage"))
+        }
+    }.register()
+
 }
 

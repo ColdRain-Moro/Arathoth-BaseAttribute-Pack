@@ -12,6 +12,14 @@ taboolib {
     install("module-nms-util")
     install("module-kether")
     install("platform-bukkit")
+    description {
+        contributors {
+            name("寒雨")
+        }
+        dependencies {
+            name("Arathoth")
+        }
+    }
     classifier = null
     version = "6.0.7-44"
 }

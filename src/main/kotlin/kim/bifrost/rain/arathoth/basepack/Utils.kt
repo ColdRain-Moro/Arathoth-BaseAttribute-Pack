@@ -2,7 +2,9 @@ package kim.bifrost.rain.arathoth.basepack
 
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
+import org.bukkit.inventory.ItemStack
 import taboolib.common.util.random
 import taboolib.module.nms.getI18nName
 import kotlin.math.min
@@ -27,6 +29,13 @@ fun Entity.damager(): LivingEntity {
 
 fun judgeChance(value: Double): Boolean {
     return random(0.0, 100.0) <= value
+}
+
+fun Player.setItemCoolDown(item: ItemStack, value: Int) {
+    if (hasCooldown(item.type)) {
+        return
+    }
+    setCooldown(item.type, value)
 }
 
 val LivingEntity.customOrI18nName: String
